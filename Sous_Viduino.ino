@@ -244,7 +244,6 @@ void loop()
    switch (opState)
    {
    case OFF:
-      lcd.clear() ;
       Off();
       break;
    case SETP:
