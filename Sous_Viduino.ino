@@ -109,6 +109,7 @@ PID_ATune aTune(&Input, &Output);
 // initialize the library with the numbers of the interface pins
 #define LCD_RS 12 
 #define LCD_ENABLE 11
+#define LCD_RW 9
 #define LCD_D4 5
 #define LCD_D5 4
 #define LCD_D6 3
@@ -117,7 +118,7 @@ PID_ATune aTune(&Input, &Output);
 #define LCD_COL_SIZE 16
 #define LCD_ROW_SIZE 2
 
-LiquidCrystal lcd(LCD_RS, LCD_ENABLE, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
+LiquidCrystal lcd(LCD_RS, LCD_RW, LCD_ENABLE, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 
 
 unsigned long lastInput = 0; // last button press
