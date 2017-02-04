@@ -13,7 +13,10 @@
 
 // Libraries for the Adafruit RGB/LCD Shield
 #include <Wire.h>
-#include <Adafruit_RGBLCDShield.h>
+//#include <Adafruit_RGBLCDShield.h>
+// include the LCD library code:
+#include <LiquidCrystal.h>
+
 
 // Libraries for the DS18B20 Temperature Sensor
 #include <OneWire.h>
@@ -27,13 +30,16 @@
 // ************************************************
 
 // Output Relay
-#define RelayPin 7
+#define RelayPin 10
+
+// Button  pad input pin
+#define BUTTON_PIN 0
 
 // One-Wire Temperature Sensor
 // (Use GPIO pins for power/ground to simplify the wiring)
-#define ONE_WIRE_BUS 2
-#define ONE_WIRE_PWR 3
-#define ONE_WIRE_GND 4
+#define ONE_WIRE_BUS 6
+#define ONE_WIRE_PWR 7
+#define ONE_WIRE_GND 8
 
 // ************************************************
 // PID Variables and constants
@@ -81,7 +87,7 @@ PID_ATune aTune(&Input, &Output);
 // DiSplay Variables and constants
 // ************************************************
 
-Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
+//Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 // These #defines make it easy to set the backlight color
 #define RED 0x1
 #define YELLOW 0x3
@@ -91,7 +97,28 @@ Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 #define VIOLET 0x5
 #define WHITE 0x7
 
+
+#define BUTTON_UP 0x08
+#define BUTTON_DOWN 0x04
+#define BUTTON_LEFT 0x10
+#define BUTTON_RIGHT 0x02
+#define BUTTON_SELECT 0x01
+
 #define BUTTON_SHIFT BUTTON_SELECT
+// LCD Initialisation
+// initialize the library with the numbers of the interface pins
+#define LCD_RS 12 
+#define LCD_ENABLE 11
+#define LCD_D4 5
+#define LCD_D5 4
+#define LCD_D6 3
+#define LCD_D7 2
+
+#define LCD_COL_SIZE 16
+#define LCD_ROW_SIZE 2
+
+LiquidCrystal lcd(LCD_RS, LCD_ENABLE, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
+
 
 unsigned long lastInput = 0; // last button press
 
@@ -154,7 +181,7 @@ void setup()
    lcd.begin(16, 2);
    lcd.createChar(1, degree); // create degree symbol from the binary
    
-   lcd.setBacklight(VIOLET);
+//   lcd.setBacklight(VIOLET);
    lcd.print(F("    Adafruit"));
    lcd.setCursor(0, 1);
    lcd.print(F("   Sous Vide!"));
@@ -217,6 +244,7 @@ void loop()
    switch (opState)
    {
    case OFF:
+      lcd.clear() ;
       Off();
       break;
    case SETP:
@@ -243,7 +271,7 @@ void loop()
 void Off()
 {
    myPID.SetMode(MANUAL);
-   lcd.setBacklight(0);
+//   lcd.setBacklight(0);
    digitalWrite(RelayPin, LOW);  // make sure it is off
    lcd.print(F("    Adafruit"));
    lcd.setCursor(0, 1);
@@ -272,7 +300,7 @@ void Off()
 // ************************************************
 void Tune_Sp()
 {
-   lcd.setBacklight(VIOLET);
+//   lcd.setBacklight(VIOLET);
    lcd.print(F("Set Temperature:"));
    uint8_t buttons = 0;
    while(true)
@@ -326,7 +354,7 @@ void Tune_Sp()
 // ************************************************
 void TuneP()
 {
-   lcd.setBacklight(VIOLET);
+//   lcd.setBacklight(VIOLET);
    lcd.print(F("Set Kp"));
 
    uint8_t buttons = 0;
@@ -380,7 +408,7 @@ void TuneP()
 // ************************************************
 void TuneI()
 {
-   lcd.setBacklight(VIOLET);
+//   lcd.setBacklight(VIOLET);
    lcd.print(F("Set Ki"));
 
    uint8_t buttons = 0;
@@ -434,7 +462,7 @@ void TuneI()
 // ************************************************
 void TuneD()
 {
-   lcd.setBacklight(VIOLET);
+//   lcd.setBacklight(VIOLET);
    lcd.print(F("Set Kd"));
 
    uint8_t buttons = 0;
@@ -611,6 +639,9 @@ void DriveOutput()
 // ************************************************
 void setBacklight()
 {
+  //lcd.clear() ;
+  
+  /*
    if (tuning)
    {
       lcd.setBacklight(VIOLET); // Tuning Mode
@@ -627,6 +658,7 @@ void setBacklight()
    {
       lcd.setBacklight(WHITE);  // We're on target!
    }
+   */
 }
 
 // ************************************************
@@ -668,9 +700,47 @@ void FinishAutoTune()
 // ************************************************
 // Check buttons and time-stamp the last press
 // ************************************************
+#define NO_BUTTON 0
+#define SHIFT_BTN 1023
+#define LEFT_BTN 1014
+#define RIGHT_BTN 510
+#define UP_BTN 769
+#define DOWN_BTN 930
+#define ERROR_BTN 5
+
+boolean isThisButtonPressed(int refVal, int readVal) {
+  if (abs(refVal-readVal)<=ERROR_BTN) {
+    return true;
+  } else {
+    return false ;
+  }
+}
+
+uint8_t readButtons(int readVal) {
+  uint8_t buttons = 0 ;
+  if (isThisButtonPressed(readVal, UP_BTN)) {
+    buttons |= BUTTON_UP;
+  }
+  if (isThisButtonPressed(readVal, DOWN_BTN)) {
+    buttons |= BUTTON_DOWN;
+  }
+  if (isThisButtonPressed(readVal, LEFT_BTN)) {
+    buttons |= BUTTON_LEFT;
+  }
+  if (isThisButtonPressed(readVal, RIGHT_BTN)) {
+    buttons |= BUTTON_RIGHT;
+  }
+  if (isThisButtonPressed(readVal, SHIFT_BTN)) {
+    buttons |= BUTTON_SELECT;
+  }  
+  return buttons ;
+}
+
+
 uint8_t ReadButtons()
 {
-  uint8_t buttons = lcd.readButtons();
+  int readVal = analogRead(BUTTON_PIN);
+  uint8_t buttons = readButtons(readVal);
   if (buttons != 0)
   {
     lastInput = millis();
