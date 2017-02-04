@@ -167,7 +167,7 @@ void setup()
    // Initialize Relay Control:
 
    pinMode(RelayPin, OUTPUT);    // Output mode to drive relay
-   digitalWrite(RelayPin, LOW);  // make sure it is off to start
+   digitalWrite(RelayPin, HIGH);  // make sure it is off to start (Relay command is reversed, LOW = Normal Close)
 
    // Set up Ground & Power for the sensor from GPIO pins
 
@@ -222,7 +222,7 @@ SIGNAL(TIMER2_OVF_vect)
 {
   if (opState == OFF)
   {
-    digitalWrite(RelayPin, LOW);  // make sure relay is off
+    digitalWrite(RelayPin, HIGH);  // make sure relay is off
   }
   else
   {
@@ -272,7 +272,7 @@ void Off()
 {
    myPID.SetMode(MANUAL);
 //   lcd.setBacklight(0);
-   digitalWrite(RelayPin, LOW);  // make sure it is off
+   digitalWrite(RelayPin, HIGH);  // make sure it is off
    lcd.print(F("    Adafruit"));
    lcd.setCursor(0, 1);
    lcd.print(F("   Sous Vide!"));
@@ -626,11 +626,11 @@ void DriveOutput()
   }
   if((onTime > 100) && (onTime > (now - windowStartTime)))
   {
-     digitalWrite(RelayPin,HIGH);
+     digitalWrite(RelayPin,LOW);
   }
   else
   {
-     digitalWrite(RelayPin,LOW);
+     digitalWrite(RelayPin,HIGH);
   }
 }
 
