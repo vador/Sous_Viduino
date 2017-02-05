@@ -30,7 +30,8 @@
 // ************************************************
 
 // Output Relay
-#define RelayPin 10
+#define RelayPin A5
+
 
 // Button  pad input pin
 #define BUTTON_PIN 0
