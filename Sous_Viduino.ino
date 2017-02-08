@@ -108,18 +108,18 @@ PID_ATune aTune(&Input, &Output);
 #define BUTTON_SHIFT BUTTON_SELECT
 // LCD Initialisation
 // initialize the library with the numbers of the interface pins
-#define LCD_RS 12 
-#define LCD_ENABLE 11
-#define LCD_RW 9
-#define LCD_D4 5
-#define LCD_D5 4
-#define LCD_D6 3
-#define LCD_D7 2
+#define LCD_RS 8 //12 
+#define LCD_ENABLE 9 //11
+// #define LCD_RW 9
+#define LCD_D4 4 //5
+#define LCD_D5 5 //4
+#define LCD_D6 6 //3
+#define LCD_D7 7 //2
 
 #define LCD_COL_SIZE 16
 #define LCD_ROW_SIZE 2
 
-LiquidCrystal lcd(LCD_RS, LCD_RW, LCD_ENABLE, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
+LiquidCrystal lcd(LCD_RS, LCD_ENABLE, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 
 
 unsigned long lastInput = 0; // last button press
@@ -701,13 +701,25 @@ void FinishAutoTune()
 // ************************************************
 // Check buttons and time-stamp the last press
 // ************************************************
-#define NO_BUTTON 0
-#define SHIFT_BTN 1023
-#define LEFT_BTN 1014
-#define RIGHT_BTN 510
-#define UP_BTN 769
-#define DOWN_BTN 930
+#define NO_BUTTON 1023 //0
+#define SHIFT_BTN 742 //1023
+#define LEFT_BTN 505 //1014
+#define RIGHT_BTN 0 //510
+#define UP_BTN 144 //769
+#define DOWN_BTN 329 //930
 #define ERROR_BTN 5
+
+/*
+static int DEFAULT_KEY_PIN = 0; 
+static int DEFAULT_THRESHOLD = 5;
+
+static int UPKEY_ARV = 144; //that's read "analogue read value"
+static int DOWNKEY_ARV = 329;
+static int LEFTKEY_ARV = 505;
+static int RIGHTKEY_ARV = 0;
+static int SELKEY_ARV = 742;
+static int NOKEY_ARV = 1023;
+ */
 
 boolean isThisButtonPressed(int refVal, int readVal) {
   if (abs(refVal-readVal)<=ERROR_BTN) {
