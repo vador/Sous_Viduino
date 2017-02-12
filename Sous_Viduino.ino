@@ -34,13 +34,13 @@
 
 
 // Button  pad input pin
-#define BUTTON_PIN 0
+#define BUTTON_PIN A0
 
 // One-Wire Temperature Sensor
 // (Use GPIO pins for power/ground to simplify the wiring)
-#define ONE_WIRE_BUS 6
-#define ONE_WIRE_PWR 7
-#define ONE_WIRE_GND 8
+#define ONE_WIRE_BUS 3 //6
+#define ONE_WIRE_PWR 1 //7
+#define ONE_WIRE_GND 2 //8
 
 // ************************************************
 // PID Variables and constants
@@ -530,8 +530,7 @@ void Run()
       setBacklight();  // set backlight based on state
 
       buttons = ReadButtons();
-      if ((buttons & BUTTON_SHIFT) 
-         && (buttons & BUTTON_RIGHT) 
+      if ((buttons & BUTTON_SHIFT)  
          && (abs(Input - Setpoint) < 0.5))  // Should be at steady-state
       {
          StartAutoTune();
@@ -702,11 +701,11 @@ void FinishAutoTune()
 // Check buttons and time-stamp the last press
 // ************************************************
 #define NO_BUTTON 1023 //0
-#define SHIFT_BTN 742 //1023
-#define LEFT_BTN 505 //1014
+#define SHIFT_BTN 720 //1023
+#define LEFT_BTN 478 //1014
 #define RIGHT_BTN 0 //510
-#define UP_BTN 144 //769
-#define DOWN_BTN 329 //930
+#define UP_BTN 131 //769
+#define DOWN_BTN 306 //930
 #define ERROR_BTN 5
 
 /*
